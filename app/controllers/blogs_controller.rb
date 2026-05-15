@@ -2,7 +2,8 @@ class BlogsController < ApplicationController
 
   # GET /blogs
   def index
-    blogs = Blog.not_deleted.order(:id).map do |blog|
+    pagy_obj, records = pagy(Blog.not_deleted.order(:id), page: [params[:page].to_i, 1].max)
+    blogs = records.map do |blog|
       {
         id: blog.id,
         title_ar: blog.title_ar,
@@ -37,7 +38,7 @@ class BlogsController < ApplicationController
       }
     end
 
-    render json: blogs
+    render json: { blogs: blogs, pagination: pagination_metadata(pagy_obj) }
   end
 
   # GET /blogs/:id
@@ -153,7 +154,6 @@ class BlogsController < ApplicationController
         :alt_ar,
         :alt_en,
         :photo,
-        :is_arabic,
         :is_landing,
         :_destroy
       ]

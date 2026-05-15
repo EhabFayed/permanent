@@ -1,0 +1,851 @@
+{
+  "info": {
+    "name": "permanent",
+    "description": "Postman collection for Milaknight project. Contains both Admin endpoints (requiring Authorization) and Public Website endpoints (with locale header and pagination).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Website (Public)",
+      "description": "Publicly accessible endpoints that provide data for the frontend website. Supports `locale` header.",
+      "item": [
+        {
+          "name": "Blogs Landing",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "locale",
+                "value": "en",
+                "type": "text",
+                "description": "Language code. 'en' for English or 'ar' for Arabic. This automatically shapes the JSON response to return keys without the _en or _ar suffix."
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3000/blogs_landing?page=1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["blogs_landing"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Pagy pagination page number"
+                }
+              ]
+            },
+            "description": "Retrieves the paginated list of published blogs for the landing page."
+          }
+        },
+        {
+          "name": "Blog Show",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "locale",
+                "value": "en",
+                "type": "text",
+                "description": "Language code. 'en' for English or 'ar' for Arabic. This automatically shapes the JSON response to return keys without the _en or _ar suffix."
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3000/blog_show?slug=sample-slug",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["blog_show"],
+              "query": [
+                {
+                  "key": "slug",
+                  "value": "sample-slug",
+                  "description": "The slug of the blog (either slug or slug_ar)"
+                }
+              ]
+            },
+            "description": "Retrieves a single blog using its slug, including contents and faqs."
+          }
+        },
+        {
+          "name": "Products Website",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "locale",
+                "value": "en",
+                "type": "text",
+                "description": "Language code. 'en' for English or 'ar' for Arabic. This automatically shapes the JSON response to return keys without the _en or _ar suffix."
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3000/products_website?page=1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["products_website"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Pagy pagination page number"
+                }
+              ]
+            },
+            "description": "Retrieves the paginated list of published products for the website."
+          }
+        },
+        {
+          "name": "FAQ About Us",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "locale",
+                "value": "en",
+                "type": "text",
+                "description": "Language code. 'en' for English or 'ar' for Arabic. This automatically shapes the JSON response to return keys without the _en or _ar suffix."
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3000/faq_about_us",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["faq_about_us"]
+            },
+            "description": "Retrieves FAQs for the About Us section that are published and not deleted."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Authentication",
+      "description": "Endpoints for authenticating admin users.",
+      "item": [
+        {
+          "name": "Signup",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {"key": "user[name]", "value": "Admin User", "type": "text"},
+                {"key": "user[email]", "value": "admin@example.com", "type": "text"},
+                {"key": "user[password]", "value": "password", "type": "text"},
+                {"key": "user[password_confirmation]", "value": "password", "type": "text"}
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:3000/signup",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["signup"]
+            },
+            "description": "Creates a new admin user."
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {"key": "email", "value": "admin@example.com", "type": "text"},
+                {"key": "password", "value": "password", "type": "text"}
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:3000/login",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["login"]
+            },
+            "description": "Logs in an admin user and returns a JWT token."
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text",
+                "description": "JWT Bearer token from the login endpoint"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3000/users/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["users", "1"]
+            },
+            "description": "Update the user's profile."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Products",
+      "description": "Endpoints to manage products. Requires Authorization header.",
+      "item": [
+        {
+          "name": "List Products",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text",
+                "description": "JWT Bearer token from the login endpoint"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3000/products?page=1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["products"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Pagy pagination page number"
+                }
+              ]
+            },
+            "description": "Retrieves all products paginated."
+          }
+        },
+        {
+          "name": "Show Product",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text",
+                "description": "JWT Bearer token from the login endpoint"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3000/products/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["products", "1"]
+            },
+            "description": "Retrieves a single product by ID."
+          }
+        },
+        {
+          "name": "Create Product",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text",
+                "description": "JWT Bearer token from the login endpoint"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {"key": "product[category]", "value": "Category", "type": "text"},
+                {"key": "product[description_en]", "value": "English description", "type": "text"},
+                {"key": "product[description_ar]", "value": "Arabic description", "type": "text"},
+                {"key": "product[size_en]", "value": "Medium", "type": "text"},
+                {"key": "product[size_ar]", "value": "متوسط", "type": "text"},
+                {"key": "product[is_published]", "value": "true", "type": "text"},
+                {"key": "product[product_photos_attributes][0][alt_en]", "value": "Photo Alt EN", "type": "text"},
+                {"key": "product[product_photos_attributes][0][alt_ar]", "value": "Photo Alt AR", "type": "text"},
+                {"key": "product[product_photos_attributes][0][is_arabic]", "value": "false", "type": "text"},
+                {"key": "product[product_photos_attributes][0][photo]", "type": "file"}
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:3000/products",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["products"]
+            },
+            "description": "Creates a new product."
+          }
+        },
+        {
+          "name": "Update Product",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text",
+                "description": "JWT Bearer token from the login endpoint"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {"key": "product[category]", "value": "Updated Category", "type": "text"},
+                {"key": "product[description_en]", "value": "Updated English description", "type": "text"},
+                {"key": "product[description_ar]", "value": "Updated Arabic description", "type": "text"},
+                {"key": "product[size_en]", "value": "Large", "type": "text"},
+                {"key": "product[size_ar]", "value": "كبير", "type": "text"},
+                {"key": "product[is_published]", "value": "true", "type": "text"},
+                {"key": "product[product_photos_attributes][0][id]", "value": "1", "type": "text", "description": "Pass the ID of the photo if you are modifying or deleting it"},
+                {"key": "product[product_photos_attributes][0][_destroy]", "value": "true", "type": "text", "description": "Pass true to delete this photo"}
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:3000/products/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["products", "1"]
+            },
+            "description": "Updates an existing product."
+          }
+        },
+        {
+          "name": "Delete Product",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text",
+                "description": "JWT Bearer token from the login endpoint"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3000/products/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["products", "1"]
+            },
+            "description": "Deletes a product."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Blogs",
+      "description": "Endpoints to manage blogs. Requires Authorization header.",
+      "item": [
+        {
+          "name": "List Blogs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text",
+                "description": "JWT Bearer token from the login endpoint"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3000/blogs?page=1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["blogs"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Pagy pagination page number"
+                }
+              ]
+            },
+            "description": "Retrieves all blogs paginated."
+          }
+        },
+        {
+          "name": "Show Blog",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text",
+                "description": "JWT Bearer token from the login endpoint"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3000/blogs/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["blogs", "1"]
+            },
+            "description": "Retrieves a single blog by ID."
+          }
+        },
+        {
+          "name": "Create Blog",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text",
+                "description": "JWT Bearer token from the login endpoint"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {"key": "blog[title_en]", "value": "English Title", "type": "text"},
+                {"key": "blog[title_ar]", "value": "Arabic Title", "type": "text"},
+                {"key": "blog[description_en]", "value": "English Description", "type": "text"},
+                {"key": "blog[description_ar]", "value": "Arabic Description", "type": "text"},
+                {"key": "blog[meta_title_en]", "value": "Meta Title EN", "type": "text"},
+                {"key": "blog[meta_title_ar]", "value": "Meta Title AR", "type": "text"},
+                {"key": "blog[meta_description_en]", "value": "Meta Desc EN", "type": "text"},
+                {"key": "blog[meta_description_ar]", "value": "Meta Desc AR", "type": "text"},
+                {"key": "blog[slug]", "value": "english-slug", "type": "text"},
+                {"key": "blog[slug_ar]", "value": "arabic-slug", "type": "text"},
+                {"key": "blog[category]", "value": "Branding", "type": "text"},
+                {"key": "blog[is_published]", "value": "true", "type": "text"},
+                {"key": "blog[is_highlighted]", "value": "false", "type": "text"},
+                {"key": "blog[blog_photos_attributes][0][alt_en]", "value": "Photo Alt EN", "type": "text"},
+                {"key": "blog[blog_photos_attributes][0][alt_ar]", "value": "Photo Alt AR", "type": "text"},
+                {"key": "blog[blog_photos_attributes][0][is_landing]", "value": "true", "type": "text"},
+                {"key": "blog[blog_photos_attributes][0][photo]", "type": "file"}
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:3000/blogs",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["blogs"]
+            },
+            "description": "Creates a new blog."
+          }
+        },
+        {
+          "name": "Update Blog",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text",
+                "description": "JWT Bearer token from the login endpoint"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {"key": "blog[title_en]", "value": "Updated English Title", "type": "text"},
+                {"key": "blog[title_ar]", "value": "Updated Arabic Title", "type": "text"},
+                {"key": "blog[description_en]", "value": "Updated English Description", "type": "text"},
+                {"key": "blog[description_ar]", "value": "Updated Arabic Description", "type": "text"},
+                {"key": "blog[meta_title_en]", "value": "Updated Meta Title EN", "type": "text"},
+                {"key": "blog[meta_title_ar]", "value": "Updated Meta Title AR", "type": "text"},
+                {"key": "blog[meta_description_en]", "value": "Updated Meta Desc EN", "type": "text"},
+                {"key": "blog[meta_description_ar]", "value": "Updated Meta Desc AR", "type": "text"},
+                {"key": "blog[slug]", "value": "updated-english-slug", "type": "text"},
+                {"key": "blog[slug_ar]", "value": "updated-arabic-slug", "type": "text"},
+                {"key": "blog[category]", "value": "Web_design", "type": "text"},
+                {"key": "blog[is_published]", "value": "true", "type": "text"},
+                {"key": "blog[is_highlighted]", "value": "false", "type": "text"},
+                {"key": "blog[blog_photos_attributes][0][id]", "value": "1", "type": "text", "description": "Pass ID to update or delete"},
+                {"key": "blog[blog_photos_attributes][0][_destroy]", "value": "true", "type": "text", "description": "Pass true to delete this photo"}
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:3000/blogs/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["blogs", "1"]
+            },
+            "description": "Updates an existing blog."
+          }
+        },
+        {
+          "name": "Delete Blog",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text",
+                "description": "JWT Bearer token from the login endpoint"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3000/blogs/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["blogs", "1"]
+            },
+            "description": "Deletes a blog."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - General FAQs",
+      "description": "Endpoints to manage general FAQs (without a blog). Requires Authorization header.",
+      "item": [
+        {
+          "name": "List General FAQs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text",
+                "description": "JWT Bearer token from the login endpoint"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3000/faqs",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["faqs"]
+            },
+            "description": "Retrieves general FAQs."
+          }
+        },
+        {
+          "name": "Create General FAQ",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text",
+                "description": "JWT Bearer token from the login endpoint"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {"key": "faq[question_ar]", "value": "Arabic Question", "type": "text"},
+                {"key": "faq[question_en]", "value": "English Question", "type": "text"},
+                {"key": "faq[answer_ar]", "value": "Arabic Answer", "type": "text"},
+                {"key": "faq[answer_en]", "value": "English Answer", "type": "text"},
+                {"key": "faq[is_published]", "value": "true", "type": "text"}
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:3000/faqs",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["faqs"]
+            },
+            "description": "Creates a new general FAQ."
+          }
+        },
+        {
+          "name": "Update General FAQ",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text",
+                "description": "JWT Bearer token from the login endpoint"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {"key": "faq[question_ar]", "value": "Updated Arabic Question", "type": "text"},
+                {"key": "faq[question_en]", "value": "Updated English Question", "type": "text"},
+                {"key": "faq[answer_ar]", "value": "Updated Arabic Answer", "type": "text"},
+                {"key": "faq[answer_en]", "value": "Updated English Answer", "type": "text"},
+                {"key": "faq[is_published]", "value": "true", "type": "text"}
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:3000/faqs/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["faqs", "1"]
+            },
+            "description": "Updates a general FAQ."
+          }
+        },
+        {
+          "name": "Delete General FAQ",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text",
+                "description": "JWT Bearer token from the login endpoint"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3000/faqs/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["faqs", "1"]
+            },
+            "description": "Deletes a general FAQ."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Blog Nested Content",
+      "description": "Endpoints to manage FAQs and Contents nested under a specific blog. Requires Authorization header.",
+      "item": [
+        {
+          "name": "List Blog FAQs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text",
+                "description": "JWT Bearer token from the login endpoint"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3000/blogs/1/faqs",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["blogs", "1", "faqs"]
+            },
+            "description": "Retrieves FAQs belonging to a specific blog."
+          }
+        },
+        {
+          "name": "Create Blog FAQ",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text",
+                "description": "JWT Bearer token from the login endpoint"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {"key": "faq[question_ar]", "value": "Arabic Question", "type": "text"},
+                {"key": "faq[question_en]", "value": "English Question", "type": "text"},
+                {"key": "faq[answer_ar]", "value": "Arabic Answer", "type": "text"},
+                {"key": "faq[answer_en]", "value": "English Answer", "type": "text"},
+                {"key": "faq[is_published]", "value": "true", "type": "text"}
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:3000/blogs/1/faqs",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["blogs", "1", "faqs"]
+            },
+            "description": "Creates a new FAQ for a specific blog."
+          }
+        },
+        {
+          "name": "Update Blog FAQ",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text",
+                "description": "JWT Bearer token from the login endpoint"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {"key": "faq[question_ar]", "value": "Updated Arabic Question", "type": "text"},
+                {"key": "faq[question_en]", "value": "Updated English Question", "type": "text"},
+                {"key": "faq[answer_ar]", "value": "Updated Arabic Answer", "type": "text"},
+                {"key": "faq[answer_en]", "value": "Updated English Answer", "type": "text"},
+                {"key": "faq[is_published]", "value": "true", "type": "text"}
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:3000/blogs/1/faqs/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["blogs", "1", "faqs", "1"]
+            },
+            "description": "Updates an FAQ belonging to a specific blog."
+          }
+        },
+        {
+          "name": "Delete Blog FAQ",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text",
+                "description": "JWT Bearer token from the login endpoint"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3000/blogs/1/faqs/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["blogs", "1", "faqs", "1"]
+            },
+            "description": "Deletes an FAQ belonging to a specific blog."
+          }
+        },
+        {
+          "name": "List Blog Contents",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text",
+                "description": "JWT Bearer token from the login endpoint"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3000/blogs/1/contents",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["blogs", "1", "contents"]
+            },
+            "description": "Retrieves contents belonging to a specific blog."
+          }
+        },
+        {
+          "name": "Create Blog Content",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text",
+                "description": "JWT Bearer token from the login endpoint"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {"key": "content[content_en]", "value": "English Content text here", "type": "text"},
+                {"key": "content[content_ar]", "value": "Arabic Content text here", "type": "text"},
+                {"key": "content[is_published]", "value": "true", "type": "text"},
+                {"key": "content[content_photos_attributes][0][alt_en]", "value": "Photo Alt EN", "type": "text"},
+                {"key": "content[content_photos_attributes][0][alt_ar]", "value": "Photo Alt AR", "type": "text"},
+                {"key": "content[content_photos_attributes][0][photo]", "type": "file"}
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:3000/blogs/1/contents",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["blogs", "1", "contents"]
+            },
+            "description": "Creates a new content section for a specific blog."
+          }
+        },
+        {
+          "name": "Update Blog Content",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text",
+                "description": "JWT Bearer token from the login endpoint"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {"key": "content[content_en]", "value": "Updated English Content text here", "type": "text"},
+                {"key": "content[content_ar]", "value": "Updated Arabic Content text here", "type": "text"},
+                {"key": "content[is_published]", "value": "true", "type": "text"},
+                {"key": "content[content_photos_attributes][0][id]", "value": "1", "type": "text", "description": "Pass ID to update or delete"},
+                {"key": "content[content_photos_attributes][0][_destroy]", "value": "true", "type": "text", "description": "Pass true to delete this photo"}
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:3000/blogs/1/contents/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["blogs", "1", "contents", "1"]
+            },
+            "description": "Updates a content section belonging to a specific blog."
+          }
+        },
+        {
+          "name": "Delete Blog Content",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text",
+                "description": "JWT Bearer token from the login endpoint"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3000/blogs/1/contents/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["blogs", "1", "contents", "1"]
+            },
+            "description": "Deletes a content section belonging to a specific blog."
+          }
+        }
+      ]
+    }
+  ]
+}

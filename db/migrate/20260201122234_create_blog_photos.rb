@@ -4,7 +4,7 @@ class CreateBlogPhotos < ActiveRecord::Migration[8.0]
       t.references :blog, null: false, foreign_key: true
       t.string :alt_ar
       t.string :alt_en
-      t.boolean :is_arabic
+      t.boolean :is_landing, default: false
       t.timestamps
     end
   end

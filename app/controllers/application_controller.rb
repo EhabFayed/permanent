@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::API
+  include Pagy::Backend
   before_action :authorize_request
   def decoded_token
     auth_header = request.headers['Authorization']
@@ -22,5 +23,15 @@ class ApplicationController < ActionController::API
 
   def authorize_request
     render json: { error: 'Not Authorized' }, status: :unauthorized unless current_user
+  end
+    def pagination_metadata(pagy)
+    {
+      current_page:   pagy.page,
+      total_pages:    pagy.pages,
+      total_count:    pagy.count,
+      items_per_page: pagy.limit,   # Pagy v9: renamed from .items → .limit
+      next_page:      pagy.next,
+      prev_page:      pagy.prev
+    }
   end
 end

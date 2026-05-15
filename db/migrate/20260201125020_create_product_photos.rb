@@ -4,7 +4,7 @@ class CreateProductPhotos < ActiveRecord::Migration[8.0]
       t.references :product, null: false, foreign_key: true
       t.string :alt_ar
       t.string :alt_en
-      t.boolean :is_arabic
+      t.boolean :is_landing
       t.timestamps
     end
   end

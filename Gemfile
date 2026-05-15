@@ -16,7 +16,9 @@ gem 'rack-cors'
 gem 'sidekiq', '~> 8.0', '>= 8.0.1'
 gem 'jwt'
 gem 'ruby-vips'
+gem 'pagy', '~> 9.3'
 gem "image_processing", "~> 1.2"
+gem "redis", ">= 4.0.1"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]

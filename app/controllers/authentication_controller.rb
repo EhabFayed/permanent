@@ -67,7 +67,8 @@ class AuthenticationController < ApplicationController
   end
 
   def encode_token(user_id)
-    JWT.encode({ user_id: user_id }, Rails.application.secret_key_base, 'HS256')
+    payload = { user_id: user_id, exp: 24.hours.from_now.to_i }
+    JWT.encode(payload, Rails.application.secret_key_base, 'HS256')
   end
 
   def user_response(user)

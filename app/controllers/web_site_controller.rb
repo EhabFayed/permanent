@@ -2,7 +2,8 @@ class WebSiteController < ApplicationController
  skip_before_action :authorize_request
 
  def blogs_landing
-    blogs= Blog.published.map do |blog|
+    pagy_obj, records = pagy(Blog.published.order(:id), page: [params[:page].to_i, 1].max)
+    blogs = records.map do |blog|
       {
         id: blog.id,
         title_ar: blog.title_ar,
@@ -22,7 +23,7 @@ class WebSiteController < ApplicationController
         end
       }
     end
-    render json: blogs
+    render json: { blogs: filter_by_locale(blogs), pagination: pagination_metadata(pagy_obj) }
   end
 
   def blog_show
@@ -76,16 +77,20 @@ class WebSiteController < ApplicationController
           end
         }
 
-    render json: data
+    render json: filter_by_locale(data)
   end
 
   def products
-    products = Product.published.map do |product|
+    pagy_obj, records = pagy(Product.published.order(:id), page: [params[:page].to_i, 1].max)
+    products = records.map do |product|
       {
         id: product.id,
         description_ar: product.description_ar,
         description_en: product.description_en,
         category: product.category,
+        is_published: product.is_published,
+        size_ar: product.size_ar,
+        size_en: product.size_en,
         photos: product.product_photos.map do |photo|
           {
             id: photo.id,
@@ -96,12 +101,12 @@ class WebSiteController < ApplicationController
         end
       }
     end
-    render json: products
+    render json: { products: filter_by_locale(products), pagination: pagination_metadata(pagy_obj) }
   end
 
   def faq_about_us
     faqs = Faq.where(is_deleted: false, is_published: true, parentable_id: nil).order(:id)
-      render json: faqs.map { |faq|
+    faqs_data = faqs.map { |faq|
       {
         id: faq.id,
         question_ar: faq.question_ar,
@@ -110,5 +115,30 @@ class WebSiteController < ApplicationController
         answer_en: faq.answer_en
       }
     }
+    render json: filter_by_locale(faqs_data)
   end
+  private
+  def filter_by_locale(data)
+      locale = request.headers['locale']
+      return data unless %w[ar en].include?(locale)
+
+      if data.is_a?(Hash)
+        filtered_hash = {}
+        data.each do |key, value|
+          key_str = key.to_s
+          if key_str.end_with?("_ar", "_en")
+            if key_str.end_with?("_#{locale}")
+              filtered_hash[key_str.sub("_#{locale}", "").to_sym] = filter_by_locale(value)
+            end
+          else
+            filtered_hash[key] = filter_by_locale(value)
+          end
+        end
+        filtered_hash
+      elsif data.is_a?(Array)
+        data.map { |item| filter_by_locale(item) }
+      else
+        data
+      end
+    end
 end

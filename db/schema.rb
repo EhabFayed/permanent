@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_10_100144) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_01_125020) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -46,10 +46,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_10_100144) do
     t.bigint "blog_id", null: false
     t.string "alt_ar"
     t.string "alt_en"
-    t.boolean "is_arabic"
+    t.boolean "is_landing", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "is_landing", default: false
     t.index ["blog_id"], name: "index_blog_photos_on_blog_id"
   end
 
@@ -119,7 +118,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_10_100144) do
     t.bigint "product_id", null: false
     t.string "alt_ar"
     t.string "alt_en"
-    t.boolean "is_arabic"
+    t.boolean "is_landing"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["product_id"], name: "index_product_photos_on_product_id"
@@ -130,6 +129,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_10_100144) do
     t.string "description_ar"
     t.string "description_en"
     t.boolean "is_published", default: false
+    t.string "size_ar"
+    t.string "size_en"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

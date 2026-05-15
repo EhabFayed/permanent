@@ -14,6 +14,7 @@ Rails.application.routes.draw do
   resources :products, only: [:index, :show, :create, :update, :destroy]
   get "blogs_landing", to: "web_site#blogs_landing"
   get "blog_show/", to: "web_site#blog_show"
+  get "products_website", to: "web_site#products"
   get '/faq_about_us', to: 'web_site#faq_about_us'
   get '/faqs', to: 'faqs#index_without_blog'
   post '/faqs', to: 'faqs#create_without_blog'
