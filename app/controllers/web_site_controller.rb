@@ -2,7 +2,7 @@ class WebSiteController < ApplicationController
  skip_before_action :authorize_request
 
  def blogs_landing
-    pagy_obj, records = pagy(Blog.published.order(:id), page: [params[:page].to_i, 1].max)
+    pagy_obj, records = pagy(Blog.published.order(created_at: :desc), page: [params[:page].to_i, 1].max)
     blogs = records.map do |blog|
       {
         id: blog.id,
@@ -81,7 +81,7 @@ class WebSiteController < ApplicationController
   end
 
   def products
-    pagy_obj, records = pagy(Product.published.order(:id), page: [params[:page].to_i, 1].max)
+    pagy_obj, records = pagy(Product.published.order(created_at: :desc), page: [params[:page].to_i, 1].max)
     products = records.map do |product|
       {
         id: product.id,
