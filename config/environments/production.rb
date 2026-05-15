@@ -23,13 +23,10 @@ Rails.application.configure do
 
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   config.assume_ssl = true
-
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   config.force_ssl = true
-
   # Skip http-to-https redirect for the default health check endpoint.
-  # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
-
+  config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } } if config.force_ssl
   # Log to STDOUT with the current request id as a default log tag.
   config.log_tags = [ :request_id ]
   config.logger   = ActiveSupport::TaggedLogging.logger(STDOUT)
@@ -54,8 +51,10 @@ Rails.application.configure do
   # config.action_mailer.raise_delivery_errors = false
 
   # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "example.com" }
-
+   config.action_mailer.default_url_options = {
+    host: ENV.fetch("RAILS_HOST", "backend.permanent-care.com"),
+    protocol: ENV.fetch("RAILS_PROTOCOL", "https")
+  }
   # Specify outgoing SMTP server. Remember to add smtp/* credentials via rails credentials:edit.
   # config.action_mailer.smtp_settings = {
   #   user_name: Rails.application.credentials.dig(:smtp, :user_name),
@@ -75,12 +74,18 @@ Rails.application.configure do
   # Only use :id for inspections in production.
   config.active_record.attributes_for_inspect = [ :id ]
 
-  # Enable DNS rebinding protection and other `Host` header attacks.
-  # config.hosts = [
-  #   "example.com",     # Allow requests from example.com
-  #   /.*\.example\.com/ # Allow requests from subdomains like `www.example.com`
-  # ]
-  #
-  # Skip DNS rebinding protection for the default health check endpoint.
-  # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+   config.hosts.clear
+
+  # Trust all proxies when behind a reverse proxy (nginx, etc.)
+  # This is important for Docker deployments behind a reverse proxy
+  # In Rails 5.0+, use ActionDispatch::RemoteIp to handle trusted proxies
+  # For Docker, we trust all private networks and localhost
+  config.action_dispatch.trusted_proxies = ActionDispatch::RemoteIp::TRUSTED_PROXIES + [
+    IPAddr.new("10.0.0.0/8"),       # Private network
+    IPAddr.new("172.16.0.0/12"),    # Private network
+    IPAddr.new("192.168.0.0/16"),  # Private network
+    IPAddr.new("127.0.0.0/8"),     # Localhost
+    IPAddr.new("::1"),              # IPv6 localhost
+  ]
+  config.public_file_server.enabled = ENV.fetch("RAILS_SERVE_STATIC_FILES", "true") == "true"
 end

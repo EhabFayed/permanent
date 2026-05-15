@@ -3,10 +3,13 @@ FROM ruby:3.2
 
 # Install dependencies (including libvips for ruby-vips)
 RUN apt-get update -qq && \
-    apt-get install -y nodejs npm postgresql-client libvips-dev
+    apt-get install -y nodejs npm postgresql-client libvips-dev curl
 
 # Set working directory
 WORKDIR /app
+
+COPY bin/docker-entrypoint /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint
 
 # Copy only Gemfile first (to optimize caching)
 COPY Gemfile ./
@@ -25,7 +28,7 @@ RUN bundle install
 COPY . .
 
 # Expose Rails port
-EXPOSE 3000
-
+EXPOSE 9008
+ENTRYPOINT ["docker-entrypoint"]
 # Start Rails server
-CMD ["rails", "server", "-b", "0.0.0.0"]
+CMD ["bash", "-c", "rm -f tmp/pids/server.pid && bin/rails server -b 0.0.0.0 -p ${PORT:-9008}"]

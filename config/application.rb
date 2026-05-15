@@ -15,7 +15,10 @@ module App
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks])
+    config.active_job.queue_adapter = :sidekiq
 
+    # config.action_controller.perform_caching = true
+    # config.action_controller.enable_fragment_cache_logging = true
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files

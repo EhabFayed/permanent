@@ -5,30 +5,27 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: tba_development
+      POSTGRES_DB: app_production
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 1s
-      timeout: 3s
-      retries: 30
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   redis:
     image: redis:7
     restart: always
-    ports:
-      - "6379:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
-      interval: 1s
+      interval: 5s
       timeout: 3s
-      retries: 30
+      retries: 5
 
   app:
     build: .
+    image: myapp_image:latest
     restart: always
     depends_on:
       db:
@@ -36,17 +33,31 @@ services:
       redis:
         condition: service_healthy
     environment:
-      DATABASE_URL: postgres://postgres:password@db:5432/tba_development
+      RAILS_ENV: production
+      DATABASE_URL: postgres://postgres:password@db:5432/app_production
       REDIS_URL: redis://redis:6379/0
+      RAILS_LOG_TO_STDOUT: "true"
+      RAILS_SERVE_STATIC_FILES: "true"
+      RAILS_HOST: backend.permanent-care.com
+      RAILS_PROTOCOL: https
+      RAILS_ASSUME_SSL: "false"
+      RAILS_FORCE_SSL: "false"
+      PORT: "9008"
+      SECRET_KEY_BASE: 6947fa33a16193596a95de8de685169e21291868051aebfd4b62d5d3d24182b3
     volumes:
-      - .:/app
       - storage:/app/storage
     ports:
-      - "3000:3000"
-    command: /bin/sh -c "rm -f tmp/pids/server.pid && bundle exec rails s -b '0.0.0.0'"
+      - "9008:9008"
+    command: ["bash", "-c", "rm -f tmp/pids/server.pid && bin/rails server -b 0.0.0.0 -p ${PORT:-9008}"]
+    healthcheck:
+      test: ["CMD", "sh", "-c", "curl -f http://localhost:${PORT:-9008}/up || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
 
   sidekiq:
-    build: .
+    image: myapp_image:latest
     restart: always
     depends_on:
       db:
@@ -54,8 +65,10 @@ services:
       redis:
         condition: service_healthy
     environment:
-      DATABASE_URL: postgres://postgres:password@db:5432/tba_development
+      RAILS_ENV: production
+      DATABASE_URL: postgres://postgres:password@db:5432/app_production
       REDIS_URL: redis://redis:6379/0
+      SECRET_KEY_BASE: 6947fa33a16193596a95de8de685169e21291868051aebfd4b62d5d3d24182b3
     volumes:
       - storage:/app/storage
     command: ["bundle", "exec", "sidekiq"]
