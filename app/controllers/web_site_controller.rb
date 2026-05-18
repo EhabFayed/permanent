@@ -17,8 +17,8 @@ class WebSiteController < ApplicationController
           {
             id: photo.id,
             url: photo.photo.attached? ? url_for(photo.photo) : nil,
-            alt: photo.is_arabic ? photo.alt_ar : photo.alt_en,
-            is_arabic: photo.is_arabic
+            alt_ar: photo.alt_ar,
+            alt_en: photo.alt_en
           }
         end
       }
@@ -95,8 +95,8 @@ class WebSiteController < ApplicationController
           {
             id: photo.id,
             url: photo.photo.attached? ? url_for(photo.photo) : nil,
-            alt: photo.is_arabic ? photo.alt_ar : photo.alt_en,
-            is_arabic: photo.is_arabic
+            alt_ar: photo.alt_ar,
+            alt_en: photo.alt_en
           }
         end
       }
