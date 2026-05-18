@@ -83,7 +83,6 @@ class ProductsController < ApplicationController
         :alt_ar,
         :alt_en,
         :photo,
-        :is_arabic,
         :_destroy
       ]
     )
