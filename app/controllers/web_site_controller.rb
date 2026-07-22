@@ -85,6 +85,8 @@ class WebSiteController < ApplicationController
     products = records.map do |product|
       {
         id: product.id,
+        title: product.title,
+        title_en: product.title_en,
         description_ar: product.description_ar,
         description_en: product.description_en,
         category: product.category,
