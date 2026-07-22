@@ -5,6 +5,8 @@ class ProductsController < ApplicationController
     products = records.map do |product|
       {
         id: product.id,
+        title: product.title,
+        title_en: product.title_en,
         category: product.category,
         description_ar: product.description_ar,
         description_en: product.description_en,
@@ -27,6 +29,8 @@ class ProductsController < ApplicationController
     product = Product.find(params[:id])
     data = {
       id: product.id,
+      title: product.title,
+      title_en: product.title_en,
       category: product.category,
       description_ar: product.description_ar,
       description_en: product.description_en,
@@ -73,6 +77,8 @@ class ProductsController < ApplicationController
   def product_params
     params.require(:product).permit(
       :category,
+      :title,
+      :title_en,
       :description_ar,
       :description_en,
       :size_ar,
